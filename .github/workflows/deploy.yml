@@ -1,0 +1,41 @@
+name: CI/CD to VPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Install deps
+      run: go mod tidy
+
+    - name: Run tests
+      run: go test ./...
+
+    - name: Build binary
+      run: go build -o billing-backend ./cmd/server
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_PRIVATE_KEY }}
+        port: 22
+        script: |
+          mkdir -p ${{ env.VPS_DEPLOY_PATH }}
+          rm -f ${{ env.VPS_DEPLOY_PATH }}/billing-backend || true
+          scp -o StrictHostKeyChecking=no billing-backend ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ env.VPS_DEPLOY_PATH }}/billing-backend
+          scp -o StrictHostKeyChecking=no -r migrations ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ env.VPS_DEPLOY_PATH }}/migrations
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cd ${{ env.VPS_DEPLOY_PATH }} && ./billing-backend &"
+
