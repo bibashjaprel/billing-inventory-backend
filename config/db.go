@@ -3,7 +3,8 @@ package config
 import (
 	"database/sql"
 	"fmt"
-	"github.com/lib/pq"
+
+	_ "github.com/lib/pq"
 )
 
 func ConnectDB() (*sql.DB, error) {
