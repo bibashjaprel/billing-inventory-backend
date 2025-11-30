@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS suppliers (
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL,
+    deleted_at TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
 
-CREATE INDEX IF NOT EXISTS idx_suppliers_name ON suppliers (name);
+CREATE INDEX IF NOT EXISTS idx_suppliers_active ON suppliers (is_active);

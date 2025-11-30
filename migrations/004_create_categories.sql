@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS categories (
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL,
+    deleted_at TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_categories_name ON categories (name);
+CREATE INDEX IF NOT EXISTS idx_categories_active ON categories (is_active);
