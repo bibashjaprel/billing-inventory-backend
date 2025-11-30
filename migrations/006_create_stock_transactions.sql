@@ -17,5 +17,7 @@ CREATE TABLE IF NOT EXISTS stock_transactions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stock_product_date ON stock_transactions (product_id, transaction_date);
+
 CREATE INDEX IF NOT EXISTS idx_stock_reference ON stock_transactions (reference_type, reference_id);
+
 CREATE INDEX IF NOT EXISTS idx_stock_active ON stock_transactions (is_active);
